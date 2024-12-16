@@ -1,0 +1,92 @@
+name: Appium with Testing - CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout code
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    # Step 2: Set up JDK 20
+    - name: Set up JDK 20
+      uses: actions/setup-java@v3
+      with:
+        java-version: '20'
+        distribution: 'temurin'
+        cache: maven
+
+    # Step 3: Install Allure CLI
+    - name: Install Allure CLI
+      run: |
+        wget https://github.com/allure-framework/allure2/releases/download/2.24.0/allure-2.24.0.tgz
+        tar -zxvf allure-2.24.0.tgz
+        sudo mv allure-2.24.0 /opt/allure
+        sudo ln -s /opt/allure/bin/allure /usr/bin/allure
+
+    # Step 4: Set BrowserStack and Appium Credentials
+    - name: Set BrowserStack and Appium Credentials
+      env:
+        BROWSERSTACK_USERNAME: mahmoudsameer_QCshyF
+        BROWSERSTACK_ACCESS_KEY: xscrZZa7CFssqgRQgV16
+      run: echo "BrowserStack and Appium credentials are set successfully."
+
+    # Step 5: Build and Test with Maven on Appium
+    - name: Build and Test with Maven
+      env:
+        BROWSERSTACK_USERNAME: mahmoudsameer_QCshyF
+        BROWSERSTACK_ACCESS_KEY: xscrZZa7CFssqgRQgV16
+      run: |
+        echo "Running Appium tests with Maven..."
+        mvn clean test || echo "Tests failed, proceeding to generate reports."
+
+    # Step 6: Ensure Allure Results Directory Exists
+    - name: Ensure Allure Results Directory
+      run: mkdir -p allure-results
+
+    # Step 7: Generate Allure Report
+    - name: Generate Allure Report
+      run: |
+        echo "Generating Allure Report..."
+        allure generate allure-results --clean -o allure-report || echo "Failed to generate Allure Report."
+      continue-on-error: true
+
+    # Step 8: Upload Allure Report as Artifact
+    - name: Upload Allure Report as Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: allure-report
+        path: allure-report
+
+    # Step 9: Zip Allure Results and Report
+    - name: Zip Allure Results and Report
+      run: |
+        echo "Zipping allure-results and allure-report..."
+        zip -r allure-report.zip allure-results allure-report || echo "Failed to zip Allure directories."
+
+    # Step 10: Send Allure Report via Email
+    - name: Send Allure Report via Email
+      uses: dawidd6/action-send-mail@v3
+      with:
+        connection_url: smtp://smtp.gmail.com:587
+        username: mahmoudsameer560@gmail.com
+        password: blxi ymqn qjlk jpio
+        to: mahmoudsameer560@gmail.com
+        from: mahmoudsameer560@gmail.com
+        subject: Allure Test Report
+        body: |
+          Please find the attached Allure Test Report.
+        attachments: allure-report.zip
+
+    # Step 11: Clean up Temporary Files
+    - name: Clean up Temporary Files
+      run: |
+        echo "Cleaning up..."
+        rm -rf allure-2.24.0.tgz allure-2.24.0 allure-report.zip
