@@ -33,28 +33,28 @@ public class Base {
         return DRIVER.get();
     }
 
-    @BeforeSuite(alwaysRun = true)
-    @Parameters({"useBrowserStack"})
-    public void runServer(@Optional("false") boolean useBrowserStack) {
-        isLocalRun = !useBrowserStack; // Set the flag based on the parameter
-        if (isLocalRun) {
-            // Start the Appium server only for local runs
-            AppiumServiceBuilder builder = new AppiumServiceBuilder();
-            builder.withAppiumJS(new File("C:/Users/skc/AppData/Roaming/npm/node_modules/appium"));
-            builder.usingDriverExecutable(new File("C:\\Program Files\\nodejs\\node.exe"));
-            builder.withIPAddress("127.0.0.1");
-            builder.usingPort(4723);
-
-            service = AppiumDriverLocalService.buildService(builder);
-            service.start();
-
-            if (service.isRunning()) {
-                System.out.println("Appium server started successfully!");
-            } else {
-                throw new RuntimeException("Failed to start the Appium server.");
-            }
-        }
-    }
+//    @BeforeSuite(alwaysRun = true)
+//    @Parameters({"useBrowserStack"})
+//    public void runServer(@Optional("false") boolean useBrowserStack) {
+//        isLocalRun = !useBrowserStack; // Set the flag based on the parameter
+//        if (isLocalRun) {
+//            // Start the Appium server only for local runs
+//            AppiumServiceBuilder builder = new AppiumServiceBuilder();
+//            builder.withAppiumJS(new File("C:/Users/skc/AppData/Roaming/npm/node_modules/appium"));
+//            builder.usingDriverExecutable(new File("C:\\Program Files\\nodejs\\node.exe"));
+//            builder.withIPAddress("127.0.0.1");
+//            builder.usingPort(4723);
+//
+//            service = AppiumDriverLocalService.buildService(builder);
+//            service.start();
+//
+//            if (service.isRunning()) {
+//                System.out.println("Appium server started successfully!");
+//            } else {
+//                throw new RuntimeException("Failed to start the Appium server.");
+//            }
+//        }
+//    }
 
     @BeforeClass(alwaysRun = true)
     @Parameters({"platformName", "useBrowserStack"})
@@ -120,11 +120,11 @@ public class Base {
         }
     }
 
-    @AfterSuite(alwaysRun = true)
-    public void stopServer() {
-        if (isLocalRun && service != null && service.isRunning()) {
-            service.stop();
-            System.out.println("Appium server stopped successfully!");
-        }
-    }
+//    @AfterSuite(alwaysRun = true)
+//    public void stopServer() {
+//        if (isLocalRun && service != null && service.isRunning()) {
+//            service.stop();
+//            System.out.println("Appium server stopped successfully!");
+//        }
+//    }
 }

@@ -146,7 +146,7 @@
 &lt;!DOCTYPE suite SYSTEM &quot;https://testng.org/testng-1.0.dtd&quot;&gt;
 &lt;suite name=&quot;Suite&quot; guice-stage=&quot;DEVELOPMENT&quot; verbose=&quot;0&quot;&gt;
   &lt;test thread-count=&quot;5&quot; name=&quot;Test&quot; verbose=&quot;0&quot;&gt;
-    &lt;parameter name=&quot;useBrowserStack&quot; value=&quot;false&quot;/&gt;
+    &lt;parameter name=&quot;useBrowserStack&quot; value=&quot;true&quot;/&gt;
     &lt;parameter name=&quot;platformName&quot; value=&quot;Android&quot;/&gt;
     &lt;classes&gt;
       &lt;class name=&quot;com.api.homepagetest.HomeTest&quot;/&gt;
@@ -193,12 +193,12 @@ data.addRows(1);
 data.setCell(0, 0, 0)
 data.setCell(0, 1, 'createNewProduct')
 data.setCell(0, 2, 'com.api.homepagetest.HomeTest')
-data.setCell(0, 3, 9356);
+data.setCell(0, 3, 7102);
 window.suiteTableData['Suite']= { tableData: data, tableDiv: 'times-div-Suite'}
 return data;
 }
               </script>
-              <span class="suite-total-time">Total running time: 9 seconds</span>
+              <span class="suite-total-time">Total running time: 7 seconds</span>
               <div id="times-div-Suite">
               </div> <!-- times-div-Suite -->
             </div> <!-- times-div -->
@@ -225,26 +225,18 @@ return data;
           <div class="main-panel-content rounded-window-bottom">
             <div class="chronological-class">
               <div class="chronological-class-name">com.api.homepagetest.HomeTest</div> <!-- chronological-class-name -->
-              <div class="configuration-suite before">
-                <span class="method-name">runServer(false)</span>
-                <span class="method-start">0 ms</span>
-              </div> <!-- configuration-suite before -->
               <div class="configuration-class before">
-                <span class="method-name">runApplication(Android, false)</span>
-                <span class="method-start">4201 ms</span>
+                <span class="method-name">runApplication(Android, true)</span>
+                <span class="method-start">0 ms</span>
               </div> <!-- configuration-class before -->
               <div class="test-method">
                 <span class="method-name">createNewProduct</span>
-                <span class="method-start">13514 ms</span>
+                <span class="method-start">22102 ms</span>
               </div> <!-- test-method -->
               <div class="configuration-class after">
                 <span class="method-name">tearDown</span>
-                <span class="method-start">22913 ms</span>
+                <span class="method-start">29254 ms</span>
               </div> <!-- configuration-class after -->
-              <div class="configuration-suite after">
-                <span class="method-name">stopServer</span>
-                <span class="method-start">24320 ms</span>
-              </div> <!-- configuration-suite after -->
           </div> <!-- main-panel-content rounded-window-bottom -->
         </div> <!-- panel -->
       </div> <!-- main-panel-root -->
