@@ -3,7 +3,7 @@
 <suite name="Suite">
 	<test name="Test">
 		<parameter name="platformName" value="Android" />
-		<parameter name="useBrowserStack" value="false" />
+		<parameter name="useBrowserStack" value="true" />
 		<classes>
 			<class name="com.api.homepagetest.HomeTest" />
 		</classes>
