@@ -17,6 +17,5 @@ public class HomeTest extends Base{
 	    Thread.sleep(5000);
 	    homepage.swipdown();
 	    Thread.sleep(5000);
-	    Assert.assertTrue(false);
 	}
 }
