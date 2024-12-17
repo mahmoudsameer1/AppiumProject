@@ -1,0 +1,12 @@
+# Maven build directory
+/target/
+
+/logs/
+
+/test-output/
+
+/.classpath
+
+/.settings
+
+/.git

@@ -10,9 +10,18 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.io.FileHandler;
+import java.nio.file.Paths;
+
 
 public class Base {
 
@@ -22,46 +31,43 @@ public class Base {
     private static ThreadLocal<AppiumDriver> DRIVER = new ThreadLocal<>();
     private AppiumDriverLocalService service;
     public Properties prop;
+    public Logger logger;
 
     public static final String BROWSERSTACK_USERNAME = "mahmoudsameer_QCshyF";
     public static final String BROWSERSTACK_ACCESS_KEY = "xscrZZa7CFssqgRQgV16";
     public static final String BROWSERSTACK_URL = "https://" + BROWSERSTACK_USERNAME + ":" + BROWSERSTACK_ACCESS_KEY + "@hub-cloud.browserstack.com/wd/hub";
 
-    private boolean isLocalRun; // Flag to track if tests are running locally
-
     public static AppiumDriver getDriver() {
         return DRIVER.get();
     }
+    
+    @Parameters({"useBrowserStack"})
+    @BeforeTest
+    public void runServer(boolean useBrowserStack) {
+        if (!useBrowserStack) {
+            AppiumServiceBuilder builder = new AppiumServiceBuilder();
+            builder.withAppiumJS(new File("C:/Users/skc/AppData/Roaming/npm/node_modules/appium"));
+            builder.usingDriverExecutable(new File("C:\\Program Files\\nodejs\\node.exe"));
+            builder.withIPAddress("127.0.0.1");
+            builder.usingPort(4723);
 
-//    @BeforeSuite(alwaysRun = true)
-//    @Parameters({"useBrowserStack"})
-//    public void runServer(@Optional("false") boolean useBrowserStack) {
-//        isLocalRun = !useBrowserStack; // Set the flag based on the parameter
-//        if (isLocalRun) {
-//            // Start the Appium server only for local runs
-//            AppiumServiceBuilder builder = new AppiumServiceBuilder();
-//            builder.withAppiumJS(new File("C:/Users/skc/AppData/Roaming/npm/node_modules/appium"));
-//            builder.usingDriverExecutable(new File("C:\\Program Files\\nodejs\\node.exe"));
-//            builder.withIPAddress("127.0.0.1");
-//            builder.usingPort(4723);
-//
-//            service = AppiumDriverLocalService.buildService(builder);
-//            service.start();
-//
-//            if (service.isRunning()) {
-//                System.out.println("Appium server started successfully!");
-//            } else {
-//                throw new RuntimeException("Failed to start the Appium server.");
-//            }
-//        }
-//    }
+            // Add the gestures plugin argument
+            builder.withArgument(() -> "--use-plugins", "gestures");
 
-    @BeforeClass(alwaysRun = true)
+            // Build and start the service
+            service = AppiumDriverLocalService.buildService(builder);
+            service.start();
+        }
+    }	
+
+    @BeforeClass
     @Parameters({"platformName", "useBrowserStack"})
     public void runApplication(String platformName, boolean useBrowserStack) throws IOException {
+    	
         FileReader file = new FileReader("./src/test/resources/config.properties");
         prop = new Properties();
         prop.load(file);
+        logger = LogManager.getLogger(this.getClass());
 
         if (useBrowserStack) {
             // BrowserStack Configuration
@@ -93,7 +99,7 @@ public class Base {
                 androidOptions.setDeviceName(prop.getProperty("deviceName"));
                 androidOptions.setPlatformName(platformName);
                 androidOptions.setAutomationName(prop.getProperty("automationName"));
-                androidOptions.setPlatformVersion(prop.getProperty("pltafromVersion"));
+                androidOptions.setPlatformVersion(prop.getProperty("platformVersion"));
                 androidOptions.setApp(System.getProperty("user.dir") + "/src/test/resources/ApiDemos-debug.apk");
                 driver = new AndroidDriver(new URL("http://127.0.0.1:4723"), androidOptions);
             } else if (platformName.equalsIgnoreCase("iOS")) {
@@ -111,8 +117,25 @@ public class Base {
 
         DRIVER.set(driver);
     }
+    
+    public String takeScreenshot(String testName) {
+        String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        String screenshotPath = Paths
+                .get(System.getProperty("user.dir"), "allure-results/screenshots", testName + "_" + timestamp + ".png")
+                .toString();
+        try {
+            TakesScreenshot ts = (TakesScreenshot) getDriver();
+            File source = ts.getScreenshotAs(OutputType.FILE);
+            File destination = new File(screenshotPath);
+            FileHandler.copy(source, destination);
+            logger.info("Screenshot captured: " + screenshotPath);
+        } catch (IOException e) {
+            logger.error("Failed to capture screenshot", e);
+        }
+        return screenshotPath;
+    }
 
-    @AfterClass(alwaysRun = true)
+    @AfterClass
     public void tearDown() {
         if (getDriver() != null) {
             getDriver().quit();
@@ -120,11 +143,10 @@ public class Base {
         }
     }
 
-//    @AfterSuite(alwaysRun = true)
-//    public void stopServer() {
-//        if (isLocalRun && service != null && service.isRunning()) {
-//            service.stop();
-//            System.out.println("Appium server stopped successfully!");
-//        }
-//    }
+    @AfterTest
+    public void stopServer() {
+        if (service != null && service.isRunning()) {
+            service.stop();
+        }
+    }
 }

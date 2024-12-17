@@ -1,5 +1,6 @@
 package com.api.homepagetest;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.API.base.Base;
@@ -14,5 +15,8 @@ public class HomeTest extends Base{
 	    homepage = new HomePage();
 	    homepage.clickaccess();
 	    Thread.sleep(5000);
+	    homepage.swipdown();
+	    Thread.sleep(5000);
+	    Assert.assertTrue(false);
 	}
 }
