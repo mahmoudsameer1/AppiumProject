@@ -9,3 +9,5 @@
 /.settings
 
 /.git
+
+/allure-results/

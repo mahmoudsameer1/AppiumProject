@@ -38,7 +38,7 @@ public class HomePage extends Base{
     	swipe.addAction(finger.createPointerMove(Duration.ofMillis(0),
     	    PointerInput.Origin.viewport(), start.getX(), start.getY()));
     	swipe.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
-    	swipe.addAction(finger.createPointerMove(Duration.ofMillis(1000),
+    	swipe.addAction(finger.createPointerMove(Duration.ofMillis(500),
     	    PointerInput.Origin.viewport(), end.getX(), end.getY()));
     	swipe.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
     	getDriver().perform(Arrays.asList(swipe));
